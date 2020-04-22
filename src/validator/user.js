@@ -1,5 +1,5 @@
+const { code } = require("../config/invite_code");
 const { validate } = require('./validator');
-const { saveProp } = require('../utils/tool');
 
 const SCHEMA = {
   type: 'object',
@@ -12,6 +12,7 @@ const SCHEMA = {
       type: 'string',
       minLength: 1,
       maxLength: 255,
+      default: "无名"
     },
     password: {
       type: 'string',
@@ -32,6 +33,10 @@ const SCHEMA = {
       type: 'string',
       minLength: 2,
       maxLength: 20,
+      validate(data){
+        const { invite_code } = data;
+        return code == invite_code;
+      }
     },
   },
 };
@@ -39,7 +44,9 @@ const SCHEMA = {
 const getScheme = (key) => {
   if (key === 'login') {
   } else if (key === 'register') {
-    saveProp(SCHEMA, ['user_name', 'password', 'invite_code', 'nick']);
+    const data = {...SCHEMA};
+    data["required"]= ['user_name', 'password', 'invite_code', 'nick'];
+    return data;
   }
 };
 

@@ -1,5 +1,7 @@
-const { code } = require("../config/invite_code");
+const { code } = require('../config/invite_code');
 const { validate } = require('./validator');
+const { sessionKey } = require('../utils/setSession');
+const { Fail } = require('../models/Response');
 
 const SCHEMA = {
   type: 'object',
@@ -12,9 +14,14 @@ const SCHEMA = {
       type: 'string',
       minLength: 1,
       maxLength: 255,
-      default: "无名"
+      default: '无名',
     },
     password: {
+      type: 'string',
+      minLength: 6,
+      maxLength: 60,
+    },
+    new_password: {
       type: 'string',
       minLength: 6,
       maxLength: 60,
@@ -24,32 +31,49 @@ const SCHEMA = {
       minLength: 2,
       maxLength: 25,
     },
-    captha: {
+    captcha: {
       type: 'string',
       minLength: 4,
       maxLength: 8,
+      validate(data, key, ctx) {
+        if (ctx.session && ctx.session['captcha']) {
+          const captcha = ctx.session['captcha'].toLocaleLowerCase();
+          if (data.captcha == captcha) {
+            return true;
+          } else {
+            return new Fail(105, '验证码不正确');
+          }
+        } else {
+          return new Fail(105, '验证码已过期');
+        }
+      },
     },
     invite_code: {
       type: 'string',
       minLength: 2,
       maxLength: 20,
-      validate(data){
+      validate(data) {
         const { invite_code } = data;
         return code == invite_code;
-      }
+      },
     },
   },
 };
 
 const getScheme = (key) => {
+  const data = { ...SCHEMA };
   if (key === 'login') {
+    data['required'] = ['user_name', 'password', 'captcha'];
+    return data;
   } else if (key === 'register') {
-    const data = {...SCHEMA};
-    data["required"]= ['user_name', 'password', 'invite_code', 'nick'];
+    data['required'] = ['user_name', 'password', 'invite_code', 'nick'];
+    return data;
+  } else if (key == 'update_pwd') {
+    data['required'] = ['user_id', 'password', 'new_password'];
     return data;
   }
 };
 
-exports.userValidate = (data, key) => {
-  return validate(getScheme(key), data);
+exports.userValidate = (data, key, ctx) => {
+  return validate(getScheme(key), data, ctx);
 };

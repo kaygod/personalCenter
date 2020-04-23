@@ -11,10 +11,6 @@ const Record = seq.define('record', {
     type: Date,
     allowNull: false,
   },
-  task_id: {
-    type: Integer.UNSIGNED,
-    allowNull: false,
-  },
   is_record: {
     type: Boolean,
     defaultValue: 0,

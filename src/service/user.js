@@ -4,12 +4,26 @@ const { delProp } = require('../utils/tool');
 /**
  * 判断用户是否存在
  */
-exports.userIsExist = async ({ user_name, password = null }) => {
-  const whereOption = {
-    user_name,
-  };
+exports.userIsExist = async ({
+  user_name = null,
+  password = null,
+  user_id = null,
+}) => {
+  const whereOption = {};
+  let require = false;
+  if (user_name !== null) {
+    whereOption['user_name'] = user_name;
+    require = true;
+  }
   if (password !== null) {
-    whereOption[password] = password;
+    whereOption['password'] = password;
+  }
+  if (user_id !== null) {
+    whereOption['user_id'] = user_id;
+    require = true;
+  }
+  if (require === false) {
+    return null;
   }
   const result = await User.findOne({
     where: whereOption,
@@ -31,4 +45,21 @@ exports.addUser = async ({ user_name, password, nick }) => {
   const data = result.dataValues;
   delProp(data, 'password');
   return data;
+};
+
+/**
+ * 修改密码
+ */
+exports.update_pwd = async ({ user_id, password }) => {
+  const result = await User.update(
+    {
+      password,
+    },
+    {
+      where: {
+        user_id,
+      },
+    }
+  );
+  return result[0] > 0;
 };

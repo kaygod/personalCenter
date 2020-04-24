@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const { salt } = require('../config');
 const moment = require('moment');
+const jwt = require('jsonwebtoken');
+const { security } = require('../config');
 
 /**
  * md5加密
@@ -46,4 +48,29 @@ exports.delProp = (data, property = null) => {
 
 exports.getDate = (date) => {
   return moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss');
+};
+
+/**
+ * 这个scope用作权限控制
+ *
+ * 1 普通用户
+ *
+ * 10 管理员
+ *
+ * 100 超级管理员
+ *
+ */
+exports.generateToken = (data, scope) => {
+  const { secretKey, expiresIn } = security;
+  const token = jwt.sign(
+    {
+      ...data,
+      scope,
+    },
+    secretKey,
+    {
+      expiresIn,
+    }
+  );
+  return token;
 };

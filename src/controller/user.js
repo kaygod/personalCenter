@@ -1,6 +1,6 @@
 const { addUser, userIsExist, update_pwd } = require('../service/user');
 const { Success, Fail } = require('../models/Response');
-const { md5, delProp } = require('../utils/tool');
+const { md5, delProp, generateToken } = require('../utils/tool');
 
 /**
  * 注册
@@ -18,12 +18,14 @@ exports.register = async ({ user_name, password, nick }) => {
 /**
  * 登录
  */
-exports.login = async ({ user_name, password }) => {
+exports.login = async ({ user_name, password, ctx }) => {
   const userInfo = await userIsExist({ user_name, password: md5(password) });
   if (userInfo == null) {
     return new Fail('110', '用户名或密码错误!');
   }
   delProp(userInfo, ['password']);
+  const token = generateToken(userInfo, 1);
+  userInfo.token = token;
   return new Success(userInfo);
 };
 

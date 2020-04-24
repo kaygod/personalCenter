@@ -1,4 +1,5 @@
 const host = 'localhost';
+const secretKey = 'wang_kai_is_god';
 
 module.exports = {
   db: {
@@ -11,5 +12,9 @@ module.exports = {
     host,
     port: 6379,
   },
-  salt: 'wang_kai_is_god',
+  salt: secretKey,
+  security: {
+    secretKey,
+    expiresIn: 60 * 60 * 24 * 30,
+  },
 };

@@ -3,6 +3,7 @@ const { register, update_pwd, login } = require('../controller/user');
 const { genValidator } = require('../middleWares/genValidator');
 const { userValidate } = require('../validator/user');
 const { genCaptcha } = require('../utils/genCaptcha');
+const Auth = require('../middleWares/auth');
 
 const router = new Router({
   prefix: '/api/user',
@@ -22,12 +23,17 @@ router.post('/register', genValidator(userValidate), async (ctx) => {
 
 router.post('/login', genValidator(userValidate), async (ctx) => {
   const { user_name, password } = ctx.data;
-  ctx.body = await login({ user_name, password });
+  ctx.body = await login({ user_name, password, ctx });
 });
 
-router.post('/update_pwd', genValidator(userValidate), async (ctx) => {
-  const { user_id, password, new_password } = ctx.data;
-  ctx.body = await update_pwd({ user_id, password, new_password });
-});
+router.post(
+  '/update_pwd',
+  new Auth().m,
+  genValidator(userValidate),
+  async (ctx) => {
+    const { user_id, password, new_password } = ctx.data;
+    ctx.body = await update_pwd({ user_id, password, new_password });
+  }
+);
 
 exports.router = router;

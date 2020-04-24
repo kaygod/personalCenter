@@ -1,4 +1,5 @@
 const Router = require('@koa/router');
+const Auth = require('../middleWares/auth');
 
 const router = new Router({
   prefix: '/api/displine',
@@ -7,7 +8,7 @@ const router = new Router({
 /**
  * 获取某一天的打卡记录
  */
-router.post('/api/get_todo', async (ctx) => {
+router.post('/api/get_todo', new Auth().m, async (ctx) => {
   const { user_id, date } = ctx.data;
   ctx.body = getTodo(user_id, date);
 });
@@ -15,7 +16,7 @@ router.post('/api/get_todo', async (ctx) => {
 /**
  * 开始打卡
  */
-router.post('/api/clock', async (ctx) => {
+router.post('/api/clock', new Auth().m, async (ctx) => {
   const { user_id, date, tasks } = ctx.data;
   ctx.body = punchClock({ user_id, date, tasks });
 });

@@ -4,6 +4,7 @@ const { genValidator } = require('../middleWares/genValidator');
 const { userValidate } = require('../validator/user');
 const { genCaptcha } = require('../utils/genCaptcha');
 const Auth = require('../middleWares/auth');
+const { Success } = require('../models/Response');
 
 const router = new Router({
   prefix: '/api/user',
@@ -19,6 +20,15 @@ router.get('/getCaptcha', async (ctx) => {
 router.post('/register', genValidator(userValidate), async (ctx) => {
   const { user_name, password, nick } = ctx.data;
   ctx.body = await register({ user_name, password, nick });
+});
+
+router.post('/user_info', new Auth().m, async (ctx) => {
+  const { user_name, user_id, nick } = ctx.auth;
+  ctx.body = new Success({
+    user_id,
+    user_name,
+    nick,
+  });
 });
 
 router.post('/login', genValidator(userValidate), async (ctx) => {

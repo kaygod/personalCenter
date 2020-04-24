@@ -14,6 +14,7 @@ class Auth {
       //这个userToken的name属性是前端自定义的,userToken.name就是token值
       if (!userToken || !userToken.name) {
         ctx.body = new Fail(88, errMsg);
+        return false;
       }
       const { secretKey } = security;
       try {
@@ -23,6 +24,7 @@ class Auth {
           errMsg = 'token已过期';
         }
         ctx.body = new Fail(89, errMsg);
+        return false;
       }
 
       // uid,scope

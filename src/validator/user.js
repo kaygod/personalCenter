@@ -7,7 +7,7 @@ const SCHEMA = {
   type: 'object',
   properties: {
     user_id: {
-      type: 'string',
+      type: ['string', 'integer'],
       pattern: '[0-9]+',
     },
     nick: {
@@ -32,7 +32,7 @@ const SCHEMA = {
       maxLength: 25,
     },
     captcha: {
-      type: 'string',
+      type: ['string', 'integer'],
       minLength: 4,
       maxLength: 8,
       validate(data, key, ctx) {
@@ -49,12 +49,16 @@ const SCHEMA = {
       },
     },
     invite_code: {
-      type: 'string',
+      type: ['string', 'integer'],
       minLength: 2,
       maxLength: 20,
       validate(data) {
         const { invite_code } = data;
-        return code == invite_code;
+        if (code == invite_code) {
+          return true;
+        } else {
+          return new Fail(106, '邀请码错误');
+        }
       },
     },
   },

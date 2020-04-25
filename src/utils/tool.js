@@ -46,9 +46,14 @@ exports.delProp = (data, property = null) => {
   }
 };
 
-exports.getDate = (date) => {
-  return moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss');
+exports.getDate = (date,type = 1) => {
+  if(type == 1){
+    return moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss');
+  }else{
+    return moment(new Date(date)).format('YYYY-MM-DD');    
+  }
 };
+
 
 /**
  * 这个scope用作权限控制

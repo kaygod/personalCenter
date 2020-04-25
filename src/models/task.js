@@ -15,6 +15,10 @@ const Task = seq.define('task', {
     type: Boolean,
     defaultValue: 0,
   },
+  record_id:{
+    type: Integer.UNSIGNED,
+    allowNull: false,
+  }
 });
 
 module.exports = Task;

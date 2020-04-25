@@ -8,6 +8,6 @@ seq
   })
   .catch((err) => {
     console.error('数据库连接失败!:', err);
-  });
+  });  
 
 seq.sync();

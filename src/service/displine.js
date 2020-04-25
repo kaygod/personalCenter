@@ -2,11 +2,13 @@ const Record = require('../models/record');
 const Task = require('../models/task');
 const {seq} = require("../utils/seq");
 const { Sequelize } = require('sequelize');
+const { getDate } = require("../utils/tool");
+const { Op } = require('sequelize');
 
 /**
  * 查询记录
  */
-exports.getRecord = (user_id, date)=>{
+exports.getRecord = async (user_id, date)=>{
   
   const sql = `SELECT a.record_id,a.date,a.is_record,b.task_id,b.content,b.is_comple FROM records AS a INNER JOIN tasks As b ON a.record_id = b.record_id where a.user_id = :user_id AND a.date=:date`;
 
@@ -43,15 +45,56 @@ exports.getRecord = (user_id, date)=>{
 }
 
 /**
+ * 查询记录
+ */
+exports.isRecordExist = async (user_id,date)=>{
+  const result = await Record.findOne({
+    where:{
+      user_id,
+      date:{
+        [Op.startsWith]:getDate(date,2)
+      }
+    }
+  })
+  if(result == null){
+    return false
+  }else{
+    return result.dataValues;
+  }
+}
+
+/**
+ * 修改记录
+ */
+exports.updateRecord = async ({date,user_id,declaration,is_record})=>{
+  
+ const result = await Record.update({
+  declaration,
+  is_record
+ },{
+   where:{
+    user_id,
+    date:{
+      [Op.startsWith]:getDate(date,2)      
+    }
+   }
+ })
+
+ return result[0] > 0;
+
+}
+
+/**
  * 增加记录
  */
-exports.addRecord = (date, user_id ) => {
+exports.addRecord = async ({date,user_id,declaration,is_record}) => {
 
   const result =  await Record.create({
     record_id:null,
     date,
-    is_record:1,
-    user_id
+    is_record,
+    user_id,
+    declaration
   })
   
   return result.dataValues;
@@ -59,9 +102,24 @@ exports.addRecord = (date, user_id ) => {
 };
 
 /**
+ * 
+ * @param {删除任务} record_id 
+ */
+exports.delTasks = async (record_id)=>{
+
+  await Task.destroy({
+    force: true,
+    where: {
+      record_id
+    }  
+  });
+
+}
+
+/**
  * 增加任务
  */
-exports.addTasks = (record_id,tasks) => {
+exports.addTasks = async (record_id,tasks) => {
 
    const result = await Task.bulkCreate(tasks.map((item)=>{
       return {

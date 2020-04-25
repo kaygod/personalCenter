@@ -11,6 +11,7 @@ const seq = new Sequelize('personCenter', db.username, db.password, {
     acquire: 30000,
     idle: 10000,
   },
+  timezone: '+08:00' //东八时区
 });
 
 module.exports = seq;

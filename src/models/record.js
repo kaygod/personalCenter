@@ -13,7 +13,7 @@ const Record = seq.define('record', {
     allowNull: false,
     get() {
       return moment(this.getDataValue('date')).format('YYYY-MM-DD');
-    }
+    },
   },
   is_record: {
     type: Boolean,
@@ -23,10 +23,10 @@ const Record = seq.define('record', {
     type: Integer.UNSIGNED,
     allowNull: false,
   },
-  declaration:{
-    type:String(500),
-    defaultValue:""
-  }
+  declaration: {
+    type: String(500),
+    defaultValue: '',
+  },
 });
 
 module.exports = Record;

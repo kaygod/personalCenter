@@ -1,44 +1,88 @@
 const { Success, Fail } = require('../models/Response');
 const sequelize = require('../utils/seq');
-const { getRecord,isRecordExist,updateRecord,addRecord,delTasks,addTasks } = require("../service/displine");
+const { getDate } = require('../utils/tool');
+const {
+  getRecord,
+  isRecordExist,
+  updateRecord,
+  addRecord,
+  delTasks,
+  addTasks,
+  queryDays,
+  currentMonthDays,
+} = require('../service/displine');
+const { getSequenceDays } = require('../provider/displine');
 /**
  * 获取某一天的打卡记录
  */
 exports.getTodo = async (user_id, date) => {
+  const list = await queryDays(user_id);
+  const mark_date = await currentMonthDays(user_id, date);
   const result = await getRecord(user_id, date);
-  if ((result = null)) {
-    return new Success({ is_record: 0 });
+  const total_day = list.length;
+  const sequence_day = getSequenceDays(list);
+  let is_record = 0,
+    can_edit = 0;
+  if (result) {
+    is_record = result.is_record;
+  }
+  if (date == getDate(new Date().getTime(), 2) && is_record == 0) {
+    can_edit = 1; //可以编辑
+  }
+  if (result == null) {
+    return new Success({
+      is_record: 0,
+      can_edit,
+      mark_date,
+      total_day,
+      sequence_day,
+    });
   } else {
-    return new Success(result);
+    return new Success({
+      ...result,
+      is_record,
+      can_edit,
+      mark_date,
+      total_day,
+      sequence_day,
+    });
   }
 };
 
 /**
  * 开始打卡
  */
-exports.punchClock = async ({  user_id, date, tasks,declaration,is_record }) => {
+exports.punchClock = async ({
+  user_id,
+  date,
+  tasks,
+  declaration,
+  is_record,
+}) => {
   const t = await sequelize.transaction();
   try {
-    let record = await isRecordExist(user_id,date);//查询有没有记录
-    let flag = 1;//修改
-    if(record){ //修改
+    let record = await isRecordExist(user_id, date); //查询有没有记录
+    let flag = 1; //修改
+    if (record) {
+      //修改
       await updateRecord({
         date,
         user_id,
         declaration,
-        is_record
+        is_record,
       });
-    }else{//新增
+    } else {
+      //新增
       record = await addRecord({
         date,
         user_id,
         declaration,
-        is_record
+        is_record,
       });
       flag = 2;
     }
-    if(tasks.length > 0){
-      if(flag == 1){
+    if (tasks.length > 0) {
+      if (flag == 1) {
         await delTasks(record.record_id);
       }
       await addTasks(record.record_id, tasks);

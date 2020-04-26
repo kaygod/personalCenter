@@ -12,6 +12,17 @@ const {
   currentMonthDays,
 } = require('../service/displine');
 const { getSequenceDays } = require('../provider/displine');
+
+/**
+ * 得到某个月的打卡记录
+ */
+exports.getMonthRecords = async ({ user_id, month, year }) => {
+  month = month - 0;
+  const date = `${year}-${month < 10 ? '0' + month : month}-01`;
+  const result = await currentMonthDays(user_id, date);
+  return new Success(result);
+};
+
 /**
  * 获取某一天的打卡记录
  */
@@ -36,6 +47,8 @@ exports.getTodo = async (user_id, date) => {
       mark_date,
       total_day,
       sequence_day,
+      tasks: [],
+      declaration: '',
     });
   } else {
     return new Success({

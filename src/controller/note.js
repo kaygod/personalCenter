@@ -4,7 +4,7 @@ const {
   addNote,
   updateNote,
   delNote,
-} = require('../service/user');
+} = require('../service/note');
 const { Success, Fail } = require('../models/Response');
 const { md5, delProp, generateToken } = require('../utils/tool');
 
@@ -22,12 +22,18 @@ exports.getDeatil = async (user_id, note_id) => {
 /**
  * 查询某用户的笔记列表
  */
-exports.getList = async (user_id) => {
+exports.getList = async (user_id, nick) => {
   const result = await queryNoteList(user_id);
   if (result == null) {
-    return new Success([]);
+    return new Success({
+      nick,
+      msg_list,
+    });
   }
-  return new Success(result);
+  return new Success({
+    nick,
+    msg_list: result,
+  });
 };
 
 /**

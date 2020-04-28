@@ -10,7 +10,7 @@ const moment = require('moment');
  */
 exports.queryNote = async (user_id, note_id) => {
   const result = await Note.findOne({
-    attributes: ['note_id', 'title', 'content', 'update_date'],
+    attributes: ['note_id', 'title', 'content', 'updatedAt'],
     where: {
       user_id,
       note_id,
@@ -19,7 +19,7 @@ exports.queryNote = async (user_id, note_id) => {
   if (result === null) {
     return null;
   } else {
-    result.dataValues;
+    return result.dataValues;
   }
 };
 
@@ -27,7 +27,7 @@ exports.queryNote = async (user_id, note_id) => {
  * 获取一组笔记
  */
 exports.queryNoteList = async (user_id) => {
-  const result = await Note.findList({
+  const result = await Note.findAll({
     attributes: ['note_id', 'title'],
     where: {
       user_id,
@@ -86,5 +86,5 @@ exports.delNote = async (user_id, note_id) => {
     },
   });
 
-  return result[0] > 0;
+  return result > 0;
 };

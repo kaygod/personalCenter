@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Auth = require('../middleWares/auth');
 const { genValidator } = require('../middleWares/genValidator');
-const { noteValidate } = require('../validator/user');
+const { noteValidate } = require('../validator/note');
 const { getDate } = require('../utils/tool');
 const {
   getDeatil,
@@ -37,8 +37,8 @@ router.post(
   new Auth().m,
   genValidator(noteValidate),
   async (ctx) => {
-    const { user_id } = ctx.auth;
-    ctx.body = await getList(user_id);
+    const { user_id, nick } = ctx.auth;
+    ctx.body = await getList(user_id, nick);
   }
 );
 
@@ -83,3 +83,5 @@ router.post(
     ctx.body = await delData(user_id, note_id);
   }
 );
+
+exports.router = router;

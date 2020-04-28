@@ -33,9 +33,12 @@ const getScheme = (key) => {
   } else if (key == 'del_note') {
     data['required'] = ['note_id'];
     return data;
+  } else {
+    data['required'] = [];
+    return data;
   }
 };
 
-exports.displineValidate = (data, key, ctx) => {
+exports.noteValidate = (data, key, ctx) => {
   return validate(getScheme(key), data, ctx);
 };

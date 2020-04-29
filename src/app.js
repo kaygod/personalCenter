@@ -7,6 +7,7 @@ const { catchError } = require('./middleWares/catcheRrror');
 const { configSession } = require('./utils/setSession');
 const bodyParser = require('koa-bodyparser');
 require('./utils/sync');
+require('./utils/_redis');
 
 app.use(catchError);
 configSession(app);

@@ -8,7 +8,7 @@ const client = redis.createClient({
 });
 
 client.on('error', function (error) {
-  console.error(error);
+  console.log('redis连接失败......');
 });
 
 exports.get = (key) => {
@@ -25,8 +25,12 @@ exports.get = (key) => {
 };
 
 exports.set = (key, value) => {
-  if (typeof value !== 'string') {
+  if (typeof value !== 'string' && value !== null) {
     value = JSON.stringify(value);
   }
   client.set(key, value);
+};
+
+exports.del = (key) => {
+  client.del(key);
 };

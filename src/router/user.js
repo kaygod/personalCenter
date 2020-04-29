@@ -1,5 +1,11 @@
 const Router = require('@koa/router');
-const { register, update_pwd, login } = require('../controller/user');
+const {
+  register,
+  login,
+  updateUserInfo,
+  getInviteCode,
+  updateInviteCode,
+} = require('../controller/user');
 const { genValidator } = require('../middleWares/genValidator');
 const { userValidate } = require('../validator/user');
 const { genCaptcha } = require('../utils/genCaptcha');
@@ -37,13 +43,45 @@ router.post('/login', genValidator(userValidate), async (ctx) => {
 });
 
 router.post(
-  '/update_pwd',
+  '/update_user',
   new Auth().m,
   genValidator(userValidate),
   async (ctx) => {
-    const { user_id, password, new_password } = ctx.data;
-    ctx.body = await update_pwd({ user_id, password, new_password });
+    const { user_id, user_name } = ctx.auth;
+    const { old_password = null, new_password = null, nick = null } = ctx.data;
+    ctx.body = await updateUserInfo({
+      user_id,
+      user_name,
+      old_password,
+      new_password,
+      nick,
+    });
   }
 );
+
+router.post('/get_code', new Auth().m, async (ctx) => {
+  const { user_name } = ctx.auth;
+  ctx.body = await getInviteCode(user_name);
+});
+
+router.post(
+  '/update_code',
+  new Auth().m,
+  genValidator(userValidate),
+  async (ctx) => {
+    const { user_name } = ctx.auth;
+    const { code } = ctx.data;
+    ctx.body = await updateInviteCode(user_name, code);
+  }
+);
+
+router.post('/get_user', new Auth().m, async (ctx) => {
+  const { user_id, user_name, nick } = ctx.auth;
+  ctx.body = new Success({
+    user_id,
+    user_name,
+    nick,
+  });
+});
 
 exports.router = router;

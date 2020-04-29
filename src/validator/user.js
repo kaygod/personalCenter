@@ -21,6 +21,11 @@ const SCHEMA = {
       minLength: 6,
       maxLength: 60,
     },
+    old_password: {
+      type: 'string',
+      minLength: 6,
+      maxLength: 60,
+    },
     new_password: {
       type: 'string',
       minLength: 6,
@@ -61,6 +66,11 @@ const SCHEMA = {
         }
       },
     },
+    code: {
+      type: ['string', 'integer'],
+      minLength: 2,
+      maxLength: 20,
+    },
   },
 };
 
@@ -74,6 +84,12 @@ const getScheme = (key) => {
     return data;
   } else if (key == 'update_pwd') {
     data['required'] = ['user_id', 'password', 'new_password'];
+    return data;
+  } else if (key == 'update_user') {
+    data['required'] = [];
+    return data;
+  } else if (key == 'update_code') {
+    data['required'] = ['code'];
     return data;
   }
 };

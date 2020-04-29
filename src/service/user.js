@@ -63,3 +63,24 @@ exports.update_pwd = async ({ user_id, password }) => {
   );
   return result[0] > 0;
 };
+
+/**
+ * 更新用户信息
+ */
+exports.updateUserInfo = async ({ user_id, new_password, nick }) => {
+  const option = {};
+  if (nick !== null) {
+    option['nick'] = nick;
+  }
+  if (new_password !== null) {
+    option['password'] = new_password;
+  }
+
+  const result = await User.update(option, {
+    where: {
+      user_id,
+    },
+  });
+
+  return result[0] > 0;
+};

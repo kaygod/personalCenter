@@ -27,23 +27,26 @@ router.post(
     const { user_id } = ctx.auth;
     const key = `${user_id}_displine`;
     const now_date = moment().format('YYYY-MM-DD');
+    const { date } = ctx.data; //用户传进来的日期
     const result = await get(key);
-    if (result) {
-      const { data_source, date } = result;
-      if (date == now_date) {
+    if (result && date == now_date) {
+      //用户查今天的数据才调用缓存
+      const { data_source, date: cache_date } = result;
+      if (cache_date == now_date) {
         ctx.body = new Success(data_source);
         return false;
       } else {
         del(key);
       }
     }
-    const { date } = ctx.data;
     const data = await getTodo(user_id, date);
     ctx.body = data;
-    set(key, {
-      date: now_date,
-      data_source: data.data,
-    });
+    if (date == now_date) {
+      set(key, {
+        date: now_date,
+        data_source: data.data,
+      });
+    }
   }
 );
 

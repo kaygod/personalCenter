@@ -100,7 +100,8 @@ exports.updateUserInfo = async ({
 exports.getInviteCode = (user_name) => {
   if (user_name == 'root') {
     //如果是超级管理员才可以查看邀请码
-    const { code } = require('../config/invite_code');
+    delete require.cache[require.resolve('../config/invite_code.js')];
+    const { code } = require('../config/invite_code.js');
     return new Success({ code });
   } else {
     return new Fail(148, '您没有权限查看邀请码!');

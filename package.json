@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --inspect=9229 ./src/app.js",
-    "prod":"pm2 start ./src/app.js"
+    "prod": "pm2 start ./src/app.js"
   },
   "repository": {
     "type": "git",

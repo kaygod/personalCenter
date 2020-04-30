@@ -11,7 +11,9 @@ const seq = new Sequelize('personCenter', db.username, db.password, {
     acquire: 30000,
     idle: 10000,
   },
-  timezone: '+08:00' //东八时区
+  timezone: '+08:00', //东八时区
 });
+
+seq.query('create database if not exists personCenter default charset = utf8;');
 
 module.exports = seq;

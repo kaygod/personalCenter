@@ -4,7 +4,7 @@ const secretKey = 'wang_kai_is_god';
 module.exports = {
   db: {
     username: 'root',
-    password: '4452279',
+    password: '123123',
     dialect: 'mysql',
     host,
   },

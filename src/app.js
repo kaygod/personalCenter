@@ -12,7 +12,7 @@ require('./utils/_redis');
 app.use(catchError);
 configSession(app);
 app.use(bodyParser());
-app.use(require('koa-static')(path.join(__dirname, './static')));
+//app.use(require('koa-static')(path.join(__dirname, './static')));
 app.use(parseDatafn);
 runRoutes(app);
 

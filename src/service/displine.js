@@ -29,17 +29,11 @@ exports.queryDays = async (user_id) => {
 };
 
 /**
- * 查询当月的日期
+ * 查询当月的日期(要获取前后三个月的数据集合)
  */
 exports.currentMonthDays = async (user_id, date) => {
-  const startDate = moment()
-    .month(moment(date).month())
-    .startOf('month')
-    .format('YYYY-MM-DD');
-  const endDate = moment()
-    .month(moment(date).month())
-    .endOf('month')
-    .format('YYYY-MM-DD');
+  const startDate = moment(date).subtract(1,'months').format("YYYY-MM-DD");//获取上一个月的日期
+  const endDate = moment(date).add(1,'months').format("YYYY-MM-DD");//获取下一个月的日期
 
   const result = await Record.findAll({
     attributes: ['date'],

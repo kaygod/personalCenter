@@ -9,7 +9,8 @@ exports.getSequenceDays = (list) => {
 
   const days = [];
 
-  list.forEach((item) => {
+  list.forEach((v) => {
+    const item = moment(v.date).format("YYYY-MM-DD");
     if (sequence_arr.length == 0) {
       sequence_arr.push(item);
     } else {

@@ -33,7 +33,7 @@ exports.queryDays = async (user_id) => {
  */
 exports.currentMonthDays = async (user_id, date) => {
   const startDate = moment(date).subtract(1,'months').format("YYYY-MM-DD");//获取上一个月的日期
-  const endDate = moment(date).add(1,'months').format("YYYY-MM-DD");//获取下一个月的日期
+  const endDate = moment(date).add(2,'months').format("YYYY-MM-DD");//获取下两个月的日期
 
   const result = await Record.findAll({
     attributes: ['date'],

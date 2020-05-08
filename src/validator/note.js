@@ -1,5 +1,4 @@
 const { validate } = require('./validator');
-const { Fail } = require('../models/Response');
 
 const SCHEMA = {
   type: 'object',

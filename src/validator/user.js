@@ -1,7 +1,29 @@
 const { code } = require('../config/invite_code');
 const { validate } = require('./validator');
-const { sessionKey } = require('../utils/setSession');
-const { Fail } = require('../models/Response');
+const { addKey } = require('../validator/validator');
+
+addKey('validateCaptcha', (data) => {
+  const { ctx } = data;
+  if (ctx.session && ctx.session['captcha']) {
+    const captcha = ctx.session['captcha'].toLocaleLowerCase();
+    if (data.captcha == captcha) {
+      return false; //验证成功
+    } else {
+      return '验证码不正确';
+    }
+  } else {
+    return '验证码已过期';
+  }
+});
+
+addKey('validateIcode', (data) => {
+  const { invite_code } = data;
+  if (code == invite_code) {
+    return false;
+  } else {
+    return '邀请码错误';
+  }
+});
 
 const SCHEMA = {
   type: 'object',
@@ -35,36 +57,19 @@ const SCHEMA = {
       type: 'string',
       minLength: 2,
       maxLength: 25,
+      errorMessage: '用户名格式错误',
     },
     captcha: {
       type: ['string', 'integer'],
       minLength: 4,
       maxLength: 8,
-      validate(data, key, ctx) {
-        if (ctx.session && ctx.session['captcha']) {
-          const captcha = ctx.session['captcha'].toLocaleLowerCase();
-          if (data.captcha == captcha) {
-            return true;
-          } else {
-            return new Fail(105, '验证码不正确');
-          }
-        } else {
-          return new Fail(105, '验证码已过期');
-        }
-      },
+      validateCaptcha: true,
     },
     invite_code: {
       type: ['string', 'integer'],
       minLength: 2,
       maxLength: 20,
-      validate(data) {
-        const { invite_code } = data;
-        if (code == invite_code) {
-          return true;
-        } else {
-          return new Fail(106, '邀请码错误');
-        }
-      },
+      validateIcode: true,
     },
     code: {
       type: ['string', 'integer'],

@@ -1,5 +1,13 @@
 const { validate } = require('./validator');
-const { Fail } = require('../models/Response');
+const { addKey } = require('../validator/validator');
+
+addKey('validateRecord', (data) => {
+  if (data.is_record == 1 && data.tasks.length == 0) {
+    return '一个任务都没有不允许打卡!';
+  } else {
+    return false;
+  }
+});
 
 const SCHEMA = {
   type: 'object',
@@ -23,13 +31,7 @@ const SCHEMA = {
     is_record: {
       type: ['string', 'integer'],
       pattern: '^\\d{1}$',
-      validate(data) {
-        if (data.is_record == 1 && data.tasks.length == 0) {
-          return new Fail(210, '一个任务都没有不允许打卡!');
-        } else {
-          return true;
-        }
-      },
+      validateRecord: true,
     },
     tasks: {
       type: 'array',
